@@ -1,0 +1,122 @@
+* {
+    font-family: 'Arial', sans-serif;
+    /* Background color */
+    
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #2c3e50;
+}
+
+
+.container {
+
+    width: 850px;
+    background: #fff;
+    display: flex;
+    gap: 70px;
+    align-items: flex-end;
+    padding: 60px 40px;
+    padding-top: 20px;
+    border-radius: 10px;
+    visibility: hidden;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translate(-50%,+50%) scale(0);
+}
+
+.open_container {
+    visibility: visible;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-50%, +50%) scale(1);
+    
+}
+@media (max-width: 700px) {
+    .container {
+        flex-direction: column; /* Stack the divs on top of each other */
+        align-items: center; /* Center content horizontally */
+        width: 100%; /* Full width for smaller screens */
+        padding: 20px;
+        gap: 20px; /* Adjust the gap between elements */
+    }
+}
+.hangman-box img{
+    min-width: 270px;
+}
+.hangman-box h1{
+    font-size: 1.5rem;
+    margin-top: 20px;
+    text-align: center;
+    text-transform: uppercase;
+}
+.word {
+    font-size: 60px;
+    color: #2c3e50;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    margin-bottom: 5%;
+
+    
+}
+
+.game-box .keyboard {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    justify-content: center;
+   
+}
+.game-box button {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    padding: 7px;
+    border: none;
+    background: #2c3e50;
+    border-radius: 4px;
+    text-transform: uppercase;
+    width: calc(100% / 9 -2px);
+}
+
+.choosen-btn {
+    color: red;
+}
+#head {
+    margin-bottom: 5%;
+}
+
+.buttons {
+    margin-bottom: 7%;
+}
+.hidden {
+    visibility: hidden;
+}
+.hidden-show {
+    visibility: visible;
+
+}
+.menu_btn {
+    transition: background-color 0.3s ease;
+    margin-left: 60%;
+    margin-bottom: 5%;
+}
+
+.menu_btn:hover {
+    background-color: #2980b9;
+}
+
+
+

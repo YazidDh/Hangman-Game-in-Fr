@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu Pendu</title>
+    <script src="jeu_pendu.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_jeu.css">
+</head>
+<body>
+    <script>
+        var niv ;
+        var nbmax;
+
+            function run_wasm_niv(niveau, nbE) {
+                niv = niveau;
+                nbmax = nbE;
+                
+                var popup = document.getElementById("gameBlock");
+                popup.classList.add("hidden-show");
+
+              
+                result = Module.ccall(
+                "set_user_input",
+                "string",
+                ["number"],
+                [niveau]
+                );
+                
+                document.getElementById("result_l").textContent =  result ; 
+
+                nbErreur = Module.ccall(
+                    "get_NbErreur",
+                    "number",
+                    null,
+                    null
+                );
+
+                document.getElementById("nberr").textContent = nbErreur;
+                var hangmanImage = document.getElementById("nb");
+               
+               hangmanImage.src = `images${niveau}/hangman-${nbErreur}.svg`;
+
+               var Nberr = document.getElementById("maxErr").textContent = nbE;
+
+            }
+            
+
+            function run_wasm_jeu(lettre) {
+                
+                result3 = Module.ccall(
+                "graph_jeu_pendu",
+                "string",
+                ["string"],
+                [lettre]
+                );
+
+                nbErreur = Module.ccall(
+                    "get_NbErreur",
+                    "number",
+                    null,
+                    null
+                );
+
+                document.getElementById("nberr").textContent = nbErreur;
+                var hangmanImage = document.getElementById("nb");
+                
+               
+                hangmanImage.src = `images${niv}/hangman-${nbErreur}.svg`;
+                document.getElementById("result_l").textContent =  result3 ;
+
+                var btn = document.getElementById("btn");
+                btn.classList.add("choosen-btn");
+                if (result3.startsWith("vous ")) {
+                    setTimeout(function() {
+                    var popup = document.getElementById("gameBlock");
+                    popup.classList.remove("hidden-show");
+                    }, 3000);
+                }
+                
+            }
+        
+            function run_wasm_ajout() {
+                var mot = document.querySelector("#mot_a").value;
+                console.log(mot);
+                result = Module.ccall(
+                "graph_Ajouter",
+                "string",
+                ["string"],
+                [mot]
+                );
+                
+                document.querySelector("#result_a").textContent =  result ;
+
+               
+                
+            }
+
+            function run_wasm_rech() {
+                var a = document.querySelector("#mot_r").value;
+                
+                result = Module.ccall(
+                "graph_recherche",
+                "number",
+                ["string"],
+                [a]
+                );
+                
+                document.querySelector("#result_r").textContent =  result ? `${a} existe dans le dictionaire`: `${a} n'existe pas dans le dictionaire`;
+               
+                
+            }
+            function run_wasm_supp() {
+                var b = document.querySelector("#mot_s").value;
+               
+                result =  Module.ccall(
+                "graph_supprimer",
+                "string",
+                ["string"],
+                [b]
+                );
+              
+                document.querySelector("#result_s").textContent =  result;
+                
+                
+            }
+            function popup_a() {
+                var popup = document.getElementById("myForm_a");
+                popup.classList.add("open-popup");
+            }
+            function popup_r() {
+                var popup = document.getElementById("myForm_r");
+                popup.classList.add("open-popup");
+            }
+            function popup_s() {
+                var popup = document.getElementById("myForm_s");
+                popup.classList.add("open-popup");
+            }
+
+            function closePopup_a() {
+                var popup = document.getElementById("myForm_a");
+                popup.classList.remove("open-popup");
+            }
+            function closePopup_r() {
+                var popup = document.getElementById("myForm_r");
+                popup.classList.remove("open-popup");
+            }
+            function closePopup_s() {
+                var popup = document.getElementById("myForm_s");
+                popup.classList.remove("open-popup");
+            }
+
+            function ouvrir_jeu(){
+                var menu = document.getElementById("menu");
+                menu.classList.add("hide_menu");
+                var container = document.getElementById("cont");
+                container.classList.add("open_container");
+            }
+
+            function returnMenu() {
+                var menu = document.getElementById("menu");
+                menu.classList.remove("hide_menu");
+                var container = document.getElementById("cont");
+                container.classList.remove("open_container");
+            }
+
+
+       
+    </script>
+    <div class="visible_menu" id="menu">
+
+   
+    <p>jeu pendu : Deviner le mot </p>
+
+
+
+    <button class="btn_" style="width: 300px;" onclick="ouvrir_jeu()" >jouer</button> <br>
+    <button id="toggleButton" onclick="popup_a()" class="btn_" style="width: 300px;">Ajouter mot</button> <br>
+    <button id="toggleButton" onclick="popup_r()" class="btn_" style="width: 300px;">Rechercher mot</button> <br>
+    <button id="toggleButton" onclick="popup_s()" class="btn_" style="width: 300px;">Supprimer mot</button> <br>
+    <div id="myForm_a" class="popup">
+        <div class="header">
+            <span class="labels">Ajouter Mot:</span>
+            <button class="close-btn" onclick="closePopup_a()">&times;</button>
+        </div>
+        <input type="text" id="mot_a" class="styled-input">
+        <button onclick="run_wasm_ajout()" class="btn_">Ajouter</button>
+        <p id="result_a" class="result"></p>
+    </div>
+
+    <div id="myForm_r" class="popup">
+        <div class="header">
+            <span class="labels">Rechercher Mot:</span>
+            <button class="close-btn" onclick="closePopup_r()">&times;</button>
+        </div>
+        <input type="text" id="mot_r" class="styled-input">
+        <button onclick="run_wasm_rech()" class="btn_">Rechercher</button>
+        <p id="result_r" class="result"></p>
+    </div>
+     
+    <div id="myForm_s" class="popup">
+        <div class="header">
+            <span class="labels">Supprimer Mot:</span>
+            <button class="close-btn" onclick="closePopup_s()">&times;</button>
+        </div>
+        <input type="text" id="mot_s" class="styled-input">
+        <button onclick="run_wasm_supp()" class="btn_">Supprimer</button>
+        <p id="result_s" class="result"></p>
+    </div>
+</div>
+
+
+
+    <div class="container" id="cont">
+        
+           
+        <div class="hangman-box">
+            <img src="images1/hangman-0.svg" alt="pendu" id="nb">
+            <h1>Jeu de Pendu</h1>
+        </div>
+        
+        <div class="game-box">
+            <button onclick="returnMenu()" class="menu_btn"> retourner au menu </button>
+            <h1 id="head">selectionner un niveau : </h1>
+            <div class="buttons">
+                <button onclick="run_wasm_niv(1,6)" class="btn">Niveau 1</button>
+                <button onclick="run_wasm_niv(2,8)" class="btn">Niveau 2</button>
+                <button onclick="run_wasm_niv(3,10)" class="btn">Niveau 3</button>
+            </div>
+        <div class="hidden" id="gameBlock">
+        <p class="word" id="result_l">******</p>
+        <p class="nbErr" >nombre d'erreur:<span id="nberr" style="color: red;">0</span>/<span id="maxErr">6</span></p>
+        
+        <div class="keyboard">
+            <button onclick="run_wasm_jeu('a')" id="btn">a</button> <button onclick="run_wasm_jeu('z')" id="btn">z</button> <button onclick="run_wasm_jeu('e')" id="btn">e</button> <button onclick="run_wasm_jeu('r')" id="btn">r</button> 
+             <button onclick="run_wasm_jeu('t')" id="btn">t</button> <button onclick="run_wasm_jeu('y')" id="btn">y</button> <button onclick="run_wasm_jeu('u')" id="btn">u</button> <button onclick="run_wasm_jeu('i')" id="btn">i</button> 
+            <button onclick="run_wasm_jeu('o')" id="btn">o</button> <button onclick="run_wasm_jeu('p')" id="btn">p</button> <button onclick="run_wasm_jeu('q')" id="btn">q</button> <button onclick="run_wasm_jeu('s')" id="btn">s</button> 
+            <button onclick="run_wasm_jeu('d')" id="btn">d</button> <button onclick="run_wasm_jeu('f')" id="btn">f</button> <button onclick="run_wasm_jeu('g')" id="btn">g</button> <button onclick="run_wasm_jeu('h')" id="btn">h</button> 
+            <button onclick="run_wasm_jeu('j')" id="btn">j</button> <button onclick="run_wasm_jeu('k')" id="btn">k</button> <button onclick="run_wasm_jeu('l')" id="btn">l</button> <button onclick="run_wasm_jeu('m')" id="btn">m</button> 
+            <button onclick="run_wasm_jeu('w')" id="btn">w</button> <button onclick="run_wasm_jeu('x')" id="btn">x</button> <button onclick="run_wasm_jeu('c')" id="btn">c</button> <button onclick="run_wasm_jeu('v')" id="btn">v</button> 
+             <button onclick="run_wasm_jeu('b')" id="btn">b</button>  <button onclick="run_wasm_jeu('n')" id="btn">n</button>
+        </div>
+        </div> 
+    </div>
+    </div>
+    
+</body>
+</html>
